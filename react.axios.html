@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Guide Express + MySQL + React + Axios (Code uniquement)</title>
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #0f172a;
+  color: #f1f5f9;
+  padding: 40px;
+  line-height: 1.6;
+}
+.section {
+  background: #1e293b;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 40px;
+}
+h1,h2,h3 { color: #38bdf8; }
+pre {
+  background: #0b1220;
+  padding: 15px;
+  border-radius: 8px;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+code { color: #38bdf8; }
+.comment {
+  color: #94a3b8;
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<h1>Guide Express (ESM) + MySQL + React Vite + Axios</h1>
+
+<div class="section">
+<h2>1 — Architecture finale</h2>
+<pre><code>
+/backend
+  server.js       // Serveur Express
+  db.js           // Connexion MySQL
+
+/frontend
+  /src
+    /api
+      userApi.js  // Gestion des appels API avec Axios
+    App.jsx       // Composant React principal
+</code></pre>
+</div>
+
+<div class="section">
+<h2>2 — Backend : installation</h2>
+<pre><code>
+// Créer le dossier backend
+mkdir backend
+cd backend
+
+// Initialiser le projet Node.js
+npm init -y
+
+// Installer Express, CORS et MySQL
+npm install express cors mysql2
+
+// Activer les modules ESM dans package.json
+{
+  "type": "module"  // Permet d'utiliser import/export
+}
+</code></pre>
+</div>
+
+<div class="section">
+<h2>3 — Connexion MySQL</h2>
+<pre><code>
+// db.js
+import mysql from "mysql2/promise";
+
+// Crée une connexion asynchrone à MySQL
+export const db = await mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "testdb"
+});
+</code></pre>
+
+<pre><code>
+// SQL : Créer la base et la table
+CREATE DATABASE testdb;
+USE testdb;
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255),
+  email VARCHAR(255)
+);
+</code></pre>
+</div>
+
+<div class="section">
+<h2>4 — Serveur Express</h2>
+<pre><code>
+// server.js
+import express from "express";
+import cors from "cors";
+import { db } from "./db.js";
+
+const app = express();
+
+app.use(cors());            // Autoriser le frontend
+app.use(express.json());     // Lire le JSON
+
+// Endpoint POST : créer un utilisateur
+app.post("/api/users", async (req, res) => {
+  const { name, email } = req.body;
+  await db.execute(
+    "INSERT INTO users (name, email) VALUES (?, ?)",
+    [name, email]
+  );
+  res.status(201).json({ message: "Utilisateur enregistré" });
+});
+
+// Endpoint GET : récupérer tous les utilisateurs
+app.get("/api/users", async (req, res) => {
+  const [rows] = await db.execute("SELECT * FROM users");
+  res.json(rows);
+});
+
+// Démarrage serveur
+app.listen(5000, () => {
+  console.log("Serveur sur http://localhost:5000");
+});
+</code></pre>
+</div>
+
+<div class="section">
+<h2>5 — Frontend React + Axios + dossier API</h2>
+<pre><code>
+// /src/api/userApi.js
+import axios from "axios";
+
+// Crée une instance Axios pour réutiliser la base URL
+const API = axios.create({
+  baseURL: "http://localhost:5000/api"
+});
+
+// Fonction pour créer un utilisateur
+export const createUser = (data) => {
+  return API.post("/users", data);
+};
+
+// Fonction pour récupérer les utilisateurs
+export const getUsers = () => {
+  return API.get("/users");
+};
+</code></pre>
+</div>
+
+<div class="section">
+<h2>6 — Formulaire React avec React Hook Form</h2>
+<pre><code>
+// App.jsx
+import { useForm } from "react-hook-form";
+import { createUser, getUsers } from "./api/userApi";
+import { useEffect, useState } from "react";
+
+function App() {
+  const { register, handleSubmit, reset } = useForm();
+  const [users, setUsers] = useState([]);
+
+  const onSubmit = async (data) => {
+    await createUser(data);
+    loadUsers();
+    reset();
+  };
+
+  const loadUsers = async () => {
+    const res = await getUsers();
+    setUsers(res.data);
+  };
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Créer un utilisateur&lt;/h2&gt;
+      &lt;form onSubmit={handleSubmit(onSubmit)}&gt;
+        &lt;input placeholder="Nom" {...register("name")} /&gt;
+        &lt;input placeholder="Email" {...register("email")} /&gt;
+        &lt;button type="submit"&gt;Envoyer&lt;/button&gt;
+      &lt;/form&gt;
+
+      &lt;h3&gt;Liste utilisateurs&lt;/h3&gt;
+      {users.length &gt; 0 &amp;&amp; (
+        &lt;ul&gt;
+          {users.map(user =&gt; (
+            &lt;li key={user.id}&gt;
+              {user.name} - {user.email}
+            &lt;/li&gt;
+          ))}
+        &lt;/ul&gt;
+      )}
+      {users.length === 0 &amp;&amp; &lt;p&gt;Aucun utilisateur trouvé&lt;/p&gt;}
+    &lt;/div&gt;
+  );
+}
+
+export default App;
+</code></pre>
+</div>
+
+<div class="section">
+<h2>7 — Lancer le projet</h2>
+<pre><code>
+// Backend : démarre le serveur Express
+node server.js
+
+// Frontend : démarre Vite
+npm run dev
+</code></pre>
+</div>
+
+</body>
+</html>
