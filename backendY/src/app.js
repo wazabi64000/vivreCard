@@ -35,6 +35,8 @@ const authLimiter = rateLimit({
     message: {error: "Troe de tentatives, rééssayez plus tard!!"}
 })
 
+
+
 app.use('/api/auth',authLimiter,  authRoutes)
 app.use('/api/users',authLimiter,  userRoutes)
 
