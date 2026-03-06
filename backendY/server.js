@@ -14,6 +14,38 @@ app.get('/', (req, res) => {
   <p>This is a paragraph text.</p>
 
   <b>This is a bold text.</b>
+
+  <style>button{
+  padding:10px;
+  border:3px solid transparent;
+  outline:none;
+  cursor:pointer
+}
+
+.button-toggle{
+  color:orange;
+  background:transparent;
+  border:3px solid orange;
+}
+
+p{
+  color:green;
+  max-width:160px;
+}
+
+.p-toggle{
+  border-bottom:3px dotted green;
+}
+
+b{
+  color:red;
+  background-color: lightblue;
+}
+
+.bold-toggle{
+  color:white;
+  background-color:black;
+}</style>
     `)
 })
 
