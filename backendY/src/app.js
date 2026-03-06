@@ -31,7 +31,7 @@ app.use(rateLimit({
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
 
-    max: 5 ,
+    max: 50 ,
     message: {error: "Troe de tentatives, rééssayez plus tard!!"}
 })
 
