@@ -11,7 +11,7 @@ import { env } from "./config/env.js"
 const app = express()
 
 app.use(helmet(
-{    contentSecurityPolicy: false} // j'active en production avec la config adapté 
+{    contentSecurityPolicy: true} // j'active en production avec la config adapté 
 ))
 app.use(cors(
   {  origin: env.CLIENT_URL || "*", 
