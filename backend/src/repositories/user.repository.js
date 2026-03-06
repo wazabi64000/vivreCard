@@ -29,12 +29,29 @@ export const userRepository = {
     );
   },
 
-
-  // récuperer la position d'es utilisateur chaque 3 minutes 
+  // récuperer la position d'es utilisateur chaque 3 minutes
   async getActiveUsers() {
     const [rows] = await db.execute(
-      `SELECT id , email , latitude, longitude, FROM users WHERE last_seen > NOW() INTERVAL 3 MINUTE`,
+      `  SELECT id, email, latitude, longitude
+  FROM users
+  WHERE last_seen > NOW() - INTERVAL 3 MINUTE`,
     );
     return rows;
+  },
+
+  
+  async findByToken(token) {
+    const [rows] = await db.execute(
+      `SELECT * FROM users WHERE verification_token = ?`,
+      [token]
+    );
+    return rows[0];
+  },
+
+  async updateVerification(userId) {
+    await db.execute(
+      `UPDATE users SET is_verified = 1, verification_token = NULL WHERE id = ?`,
+      [userId]
+    );
   },
 };

@@ -1,30 +1,72 @@
-import express from "express"
-import cors from "cors"
-import helmet from "helmet"
-import rateLimit from "express-rate-limit"
-import authRoutes from "./routes/auth.route.js"
-import { errorHandle } from "./middlewares/error.middleware.js"
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 
+import authRoutes from "./routes/auth.route.js";
+import userRoutes from "./routes/user.route.js"
+import { errorHandle } from "./middlewares/error.middleware.js";
 
-const app = express()
+const app = express();
 
-// Utilisation de helmet avec une configuration souple pour commencer
-app.use(helmet({
-  contentSecurityPolicy: false, // Désactive temporairement si ça bloque trop
-}));
+/* ========================
+   Sécurité HTTP
+======================== */
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // À activer en production avec configuration adaptée
+  })
+);
 
-app.use(cors())
-app.use(express.json())
+/* ========================
+   CORS contrôlé
+======================== */
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "*",
+    credentials: true,
+  })
+);
 
-app.use(rateLimit({
+/* ========================
+   Parsing JSON
+======================== */
+app.use(express.json());
+
+/* ========================
+   Rate limit global
+======================== */
+app.use(
+  rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 50
-}))
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+  })
+);
 
+/* ========================
+   Rate limit spécifique auth
+======================== */
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10, // plus strict pour login/register
+  message: { error: "Trop de tentatives, réessayez plus tard." },
+});
 
-app.use('/api/auth', authRoutes)
+app.use("/api/auth", authLimiter, authRoutes);
+app.use('/api/users' ,authLimiter,  userRoutes )
 
+/* ========================
+   404 handler
+======================== */
+app.use((req, res) => {
+  res.status(404).json({ error: "Route non trouvée" });
+});
 
-app.use(errorHandle)
+/* ========================
+   Error middleware
+======================== */
+app.use(errorHandle);
 
-export default app
+export default app;

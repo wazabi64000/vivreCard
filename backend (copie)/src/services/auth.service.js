@@ -7,23 +7,28 @@ import { userRepository } from "../repositories/user.repository.js";
 import { MailService } from "./mail.service.js";
 
 export const AuthService = {
+
+  // ================= INSCRIPTIOn ====================//
   async register(email, password) {
     const hashed = await argon2.hash(password);
-  //   const verificationToken = crypto.randomBytes(32).toString("hex");
-    const verificationToken =  uuid4()
+    //   const verificationToken = crypto.randomBytes(32).toString("hex");
+    const verification_token = uuid4();
 
     const userid = await userRepository.create({
       email,
       password: hashed,
-      verificationToken,
+      verification_token,
     });
 
     // On envoie l'email de vérification
 
-    await MailService.sendVerificationEmail(email, verificationToken);
+    await MailService.sendVerificationEmail(email, verification_token);
 
     return userid;
   },
+
+
+  // ========= LOGIN  ==============//
 
   async login(email, password) {
     // email
@@ -43,5 +48,19 @@ export const AuthService = {
       env.JWT_SECRET,
       { expiresIn: "7d" },
     );
+  },
+
+  // vérifier l'utilisateur apres inscription 
+
+  async verifyUser(token) {
+ 
+
+    const user = await userRepository.findByToken(token);
+
+    if (!user) return null;
+
+    await userRepository.updateVérification(user.id);
+
+    return user;
   },
 };

@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 
 transporter.verify((error, success) => {
   if (error) {
-    console.error("Echec à la connexion au service SMTP");
+    console.error("Echec à la connexion au service SMTP", error);
   } else {
     console.log("Connexion SMTP réussie :", success);
   }
@@ -21,12 +21,12 @@ transporter.verify((error, success) => {
 
 export const MailService = {
     async sendVerificationEmail(email, token) {
-        const link = `http://localhost:3000/verify/${token}`;
+        const link = `http://localhost:3000/api/auth/verify/${token}`;
         await transporter.sendMail({
             from: `"CAMYS" <${env.SMTP_SENDER}>`,
             to: email,
             subject: "Email de vérification",
-            html: `<h1>Bienvenue sur notre application </h1> : <p>Veuillez cliquer sur le  <a href="${link}">${link}</a> suivant pour vérifier votre mail </p>`
+            html: `<h1>Bienvenue sur notre application </h1> : <p>Veuillez cliquer sur le  <a href="${link}" target="blank">${link}</a> suivant pour vérifier votre mail </p>`
         })
     }
 }

@@ -44,4 +44,15 @@ export const AuthService = {
       { expiresIn: "7d" },
     );
   },
+
+
+
+
+  async verifyUser(token) {
+    const user = await userRepository.findByToken(token);
+    if (!user) return null;
+
+    await userRepository.updateVerification(user.id);
+    return user;
+  },
 };

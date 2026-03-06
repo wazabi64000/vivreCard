@@ -6,7 +6,7 @@ export const userRepository = {
   async create(user) {
     const [result] = await db.execute(
       `INSERT INTO users (email, password ,verification_token) VALUES (?, ? , ? ) `,
-      [user.email, user.password, user.verificationToken],
+      [user.email, user.password, user.verification_token],
     );
     return result.insertId;
   },
@@ -21,6 +21,25 @@ export const userRepository = {
     return rows[0];
   },
 
+  // chercher un token
+
+  async findByToken(token) {
+    const [rows] = await db.execute(
+      `SELECT * FROM users WHERE verification_token = ?`,
+      [token],
+    );
+    return rows[0];
+  },
+
+  // l'update aprés verification
+
+  async updateVérification(userId) {
+    await db.execute(
+      `UPDATE users SET is_verified = 1, verification_token = NULL WHERE id = ?  `,
+      [userId],
+    );
+  },
+
   // mettre a jour la localisation de l'utilisateur
   async updateLocation(userId, lat, lng) {
     await db.execute(
@@ -29,12 +48,26 @@ export const userRepository = {
     );
   },
 
-
-  // récuperer la position d'es utilisateur chaque 3 minutes 
+  // récuperer la position d'es utilisateur chaque 3 minutes
   async getActiveUsers() {
     const [rows] = await db.execute(
-      `SELECT id , email , latitude, longitude, FROM users WHERE last_seen > NOW() INTERVAL 3 MINUTE`,
+      `SELECT id , email , latitude, longitude FROM users WHERE last_seen > NOW() - INTERVAL 3 MINUTE`,
     );
     return rows;
+  },
+
+  async findByToken(token) {
+    const [rows] = await db.execute(
+      `SELECT * FROM users WHERE verification_token = ?`,
+      [token],
+    );
+    return rows[0];
+  },
+
+  async updateVerification(userId) {
+    await db.execute(
+      `UPDATE users SET 	is_verified = 1, verification_token = NULL WHERE id = ?`,
+      [userId],
+    );
   },
 };

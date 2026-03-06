@@ -19,5 +19,33 @@ export const AuthController = {
         } catch (error) {
             next(error)
         }
+    },
+
+      async verifyEmail(req, res, next) {
+    try {
+      const { token } = req.params;
+      const user = await AuthService.verifyUser(token);
+
+      if (!user) {
+        return res.status(400).json({ message: "Token invalide ou expiré" });
+      }
+
+      return res.status(200).json({ message: "Email vérifié avec succès" });
+    } catch (error) {
+      next(error);
     }
+  },
+  
+  
+  async verifyUser(token) {
+    const user = await userRepository.findByToken(token);
+    if (!user) return null;
+
+    await userRepository.updateVerification(user.id);
+    return user;
+  },
+
+
+
+
 }
