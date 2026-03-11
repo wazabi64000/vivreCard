@@ -32,7 +32,7 @@ export const MailService = {
         subject: "Email de vérification",
         html: `<h1>Bienvenue sur notre application</h1>
                <p>Veuillez cliquer sur le lien suivant pour vérifier votre email :</p>
-               <a href="${link}" target="_blank">${link}</a>`,
+               <a href="${link}" target="_blank" target="_blank">${link}</a>`,
       });
     } catch (err) {
       console.error("Erreur lors de l'envoi de l'email :", err.message);
