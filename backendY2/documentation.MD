@@ -21,6 +21,13 @@
 
 ---
 
+### baseURL: 
+
+```
+https://vivre-card.vercel.app/
+```
+|-----------------------------|
+
 ## 2. Endpoints
 ### 2.1 Authentification
 
