@@ -23,7 +23,9 @@ app.use(cors({
 
 // Parsing JSON
 app.use(express.json());
-app.set('trust proxy', 1);
+app.set('trust proxy', true);
+
+
 // Limiter le nombre de requêtes global
 app.use(rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -35,6 +37,9 @@ app.use(rateLimit({
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 50,
+    keyGenerator: (req) => {
+    return req.ip;
+  },
   message: { error: "Trop de tentatives, réessayez plus tard" }
 });
 
