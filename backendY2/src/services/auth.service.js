@@ -3,9 +3,10 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { v4 as uuid4 } from "uuid";
 import { env } from "../config/env.js";
-import { userRepository } from "../repositories/user.repository.js"; 
-import { MailService } from "./mail.service.js";
+import { userRepository } from "../repositories/user.repository.js";
  
+import { MailService } from "./mail.service.js";
+
 export const AuthService = {
   // ================= INSCRIPTIOn ====================//
   async register(email, password) {
@@ -28,25 +29,21 @@ export const AuthService = {
 
   // ========= LOGIN  ==============//
 
-async login(email, password) {
-  const user = await userRepository.findByEmail(email);
+  async login(email, password) {
+    const user = await userRepository.findByEmail(email);
 
-  if (!user) {
-    throw new Error("Invalid credentials");
-  }
+    if (!user) {
+      throw new Error("Invalid credentials");
+    }
 
-  const valid = await argon2.verify(user.password, password);
+    const valid = await argon2.verify(user.password, password);
 
-  if (!valid) {
-    throw new Error("Invalid credentials");
-  }
+    if (!valid) {
+      throw new Error("Invalid credentials");
+    }
 
-  return jwt.sign(
-    { id: user.id },
-    env.JWT_SECRET,
-    { expiresIn: "7d" }
-  );
-},
+    return jwt.sign({ id: user.id }, env.JWT_SECRET, { expiresIn: "7d" });
+  },
 
   // vérifier l'utilisateur apres inscription
 
@@ -55,7 +52,7 @@ async login(email, password) {
 
     if (!user) return null;
 
-await userRepository.updateVerification(user.id);
+    await userRepository.UpdateVerification(user.id);
 
     return user;
   },

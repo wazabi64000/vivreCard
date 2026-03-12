@@ -65,7 +65,7 @@ export const userRepository = {
    * - Met à jour is_verified à 1 et supprime le token
    * - Vérifie que userId est un nombre
    */
-  async updateVerification(userId) {
+  async UpdateVerification(userId) {
     if (typeof userId !== "number") throw new Error("Invalid userId");
     try {
       await db.execute(
