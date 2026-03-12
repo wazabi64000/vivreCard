@@ -55,7 +55,7 @@ async login(email, password) {
 
     if (!user) return null;
 
-await userRepository.updateVerification(Number(user.id));
+await userRepository.updateVerification(user.id);
 
     return user;
   },
