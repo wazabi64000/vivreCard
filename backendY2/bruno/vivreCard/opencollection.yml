@@ -22,7 +22,7 @@ request:
     - name: baseURL
       value: http://localhost:3000/api
     - name: baseDeployedURL
-      value: vivre-card-3.vercel.app/
+      value: https://vivre-card-3.vercel.app/api
   scripts:
     - type: after-response
       code: |-

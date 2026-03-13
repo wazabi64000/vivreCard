@@ -3,4 +3,4 @@ variables:
   - name: baseURL
     value: http://localhost:3000/api
   - name: DepolyedURL
-    value: https://vivre-card.vercel.app/api
+    value: https://vivre-card-3.vercel.app/api

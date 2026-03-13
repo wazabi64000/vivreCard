@@ -7,6 +7,8 @@ import userRoutes from "./routes/user.route.js";
 import { errorHandle } from "./middlewares/error.middleware.js";
 import { env } from "./config/env.js";
 
+import {authenticate} from "./middlewares/auth.middleware.js" 
+
 const app = express();
 
 // --- CRUCIAL POUR VERCEL ---
@@ -42,7 +44,7 @@ app.use(limiter);
 // ================== Routes ================== //
 // Note : Assurez-vous que 'authLimiter' est bien défini ou utilisez 'limiter'
 app.use('/api/auth', authRoutes); 
-app.use('/api/users', userRoutes);
+app.use('/api/users',authenticate,  userRoutes);
 
 app.get("/ip", (req, res) => {
   res.send(req.ip); // Devrait maintenant afficher l'IP réelle de l'utilisateur, pas celle de Vercel

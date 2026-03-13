@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{baseURL}}/auth/verify/a3c45652-a130-46c2-ac6a-f450b2da9335"
+  url: "{{baseDeployedURL}}/auth/verify/{{token}}"
   body:
     type: json
     data: |-
