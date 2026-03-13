@@ -67,8 +67,12 @@ CREATE TABLE users (
 https://wazabi64000.github.io/vivreCard/
 
 
+###  Creation de l'application ### 
 
 
+//==========================================//
+npx create-expo-app vivre-card-app
+//==========================================//
 
 
 vivre-card-app
