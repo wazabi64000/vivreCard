@@ -27,7 +27,7 @@ app.use(express.json());
 // ================== Configuration Rate Limit ================== //
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
-  max: 50,
+  max: 500,
   standardHeaders: true,
   legacyHeaders: false,
   // CETTE LIGNE EST LA SOLUTION :

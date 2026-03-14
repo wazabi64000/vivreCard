@@ -192,3 +192,35 @@ npx expo install react-native-maps
 //==========================================//
 npm start / npx expo start 
 //==========================================//
+
+
+### baseURL: 
+
+```
+https://vivre-card-3.vercel.app
+```
+|-----------------------------|
+
+### eas.json ### 
+
+```json
+
+{
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      }
+    }
+  }
+}
+
+```
+
+========================================
+```bash
+eas build -p android --profile preview 
+```
+
+
+=============================================
